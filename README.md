@@ -22,7 +22,7 @@ Kindlemail reads from a .kindlemail config file, saved in the users $HOME direct
 
 >  LINUX:     /home/curtis/.kindlemail
 >  OSX:      /users/curtis/.kindlemail
->  WINDOWS:  C:\Users\curtis\.kindlemail
+>  WINDOWS:  C:\Users\curtis\\.kindlemail
 
 *note, I don't own Windows or OSX, and I could be completely wrong 
 about the $HOME directories on these OSes. Let me know if there's a better way to do this.

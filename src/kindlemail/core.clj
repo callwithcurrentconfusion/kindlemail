@@ -61,11 +61,11 @@
   (let [[opts a doc]
         (clojure.tools.cli/cli
          args
-         ["-h" "--help" "Show help." :flag true]
+         ["-h" "--help" "Show this dialogue." :flag true]
          ["-f" "--file" "Specify the name of the file to send."]
          ["-l" "--list" "Mail to a named list - declared in .kindlemail."]
          ["-c" "--config" "Use a specific config file." :default (find-config)]
-         ["-s" "--setup" "Copy a new kindlemail config file from a template (run on the .kindlemail_template)."]
+         ["-s" "--setup" "Copy a config to $HOME/.kindlemail."]
 ;         ["-v" "--verbose" "Verbose mode." :flag true]
          )
         filename (:file opts)]

@@ -19,6 +19,7 @@
   (clojure.java.io/copy template f))
 
 ;; find-config [] -> file | nil
+;; NOTE: windows is "USERPROFILE"
 (defn find-config
   "Locate the .kindlemail configuration file.
    If not found, return nil"
