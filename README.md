@@ -1,4 +1,4 @@
-kindlemail
+Kindlemail
 ==========
 
 Kindlemail is a quick-n-dirty utility for sending files or web-pages to your kindle. 
@@ -10,17 +10,17 @@ all constructive criticism welcome. Please email me with any questions, comments
 
 ## Setup
 
-#Building:
+#Building
 
 Using Leiningen is the easiet way. Just run lein uberjar in the project directory. 
-Not using Leiningen, you can either build your jar with java, or ask me to send you one.
+Not using Leiningen, you can either build your jar with Java, or ask me to send you one.
 I'll eventually put binaries somewhere public.
 
-#Configuring:
+#Configuring
 
 Kindlemail reads from a .kindlemail config file, saved in the users $HOME directory.
 
->  *NIX:     /home/curtis/.kindlemail
+>  LINUX:     /home/curtis/.kindlemail
 >  OSX:      /users/curtis/.kindlemail
 >  WINDOWS:  C:\Users\curtis\.kindlemail
 
@@ -47,10 +47,6 @@ Currently, kindlemail will only use SMTP and not local mail. (coming soon, hopef
 
 The data in the config file is read into the program as a Clojure map. 
 Only change the fields require, or kindlemail won't work.
-
-:Dependencies
-
->  java FIXME (version)
 
 
 ## Usage
