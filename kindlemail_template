@@ -1,0 +1,47 @@
+;; This is a kindlemail config file.
+;; Replace all capitalized words with a "string" fitting the description. 
+;; Example: :host "smtp.gmail.com",
+;; everything preceded by a colon ";" is a comment and will not be read by kindlemail
+{
+
+;; The host you're using to send the mail.
+;; "smtp.gmail.com"
+:host "HOST" 
+
+;; The username for host.
+;; "username"
+:user "USER"
+
+;; Password for host.
+;; "password"
+:pass "PASS"
+
+;; The email associated with your user@host
+;; "username@gmail.com"
+:from "FROM"
+
+;; The default target
+;; "username@kindle.com"
+:to "TO"
+
+;; Optionally, Specify named lists that can be used as a collective TO.
+;; Greate for sending an article to an entire class, or everyone in a book club, etc.
+;; Run kindlemail with the -l --list option and specify the list by name to kindlemail everyone on the list.
+;; The syntax is: "name" ["list" "of" "emails"].
+
+:lists 
+{
+;; Example:
+;; "history-101" ["bob@school.edu" "michelle@school.edu"]
+
+
+}      
+
+;; Device (optional)
+;; Specify your kindle version.
+;; The kindlemail program will check for allowed filetypes for your device
+;; choices are "kindle" and "fire" right now.
+
+:device "fire"
+
+}
