@@ -1,7 +1,7 @@
 ;; This is a kindlemail config file.
 ;; Replace all capitalized words with a "string" fitting the description. 
 ;; Example: :host "smtp.gmail.com",
-;; everything preceded by a colon ";" is a comment and will not be read by kindlemail
+;; everything preceded by a semi-colon ";" is a comment and will not be read by kindlemail
 {
 
 ;; The host you're using to send the mail.
