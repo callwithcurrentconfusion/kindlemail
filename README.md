@@ -6,14 +6,18 @@ Kindlemail is a quick-n-dirty utility for sending files or web-pages to your kin
 This project is still in very early Alpha, and will most likely 
 get broken a lot as I add new features, and attempt to clean things up. 
 I'm still learning Clojure, and I am still amateur programmer; 
-all constructive criticism welcome. Please email me with any questions, comments, criticisms, or concerns.
+all constructive criticism is welcome. 
+Please email me with any questions, comments, criticisms, or concerns.
 
 ## Setup
 
 #Building
 
-Using Leiningen is the easiet way. Just run lein uberjar in the project directory. 
-Not using Leiningen, you can either build your jar with Java, or ask me to send you one.
+If you have Leiningen installed, you can build with a simple:
+
+   $ lein uberjar
+
+Not using Leiningen, you can either build your jar with Clojure and Java, or ask me to send you one.
 I'll eventually put binaries somewhere public.
 
 #Configuring
@@ -45,7 +49,7 @@ Kindlemail uses the postal library written by Andrew Raines - https://github.com
 
 Currently, kindlemail will only use SMTP and not local mail. (coming soon, hopefully).
 
-The data in the config file is read into the program as a Clojure map. 
+The data in the config file is read into the program as a map. 
 Only change the fields require, or kindlemail won't work.
 
 
