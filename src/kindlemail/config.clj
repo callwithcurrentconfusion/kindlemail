@@ -7,7 +7,7 @@
 (defn prompt-for
   "Prompt a user with p and return true if their input matchs m"
   [p m]
-  (print p)
+  (println p)
   (let [response (.toUpperCase ;"yes"
                                (read-line)
                                )]
@@ -18,7 +18,7 @@
   "copy template to f"
   [template f]
   ;; for now do something as simple 
-  (println (str "YES: Copying config file " template "to " f "."))
+  (println (str "YES: Copying config file " template " to " f "."))
   (println "Edit this file for future use, or specify another config to use at runtime with the \"-c\" flag.")
   (clojure.java.io/copy template f))
 
@@ -40,7 +40,7 @@
     (when (.exists conf-file)
       (println (str "Config file already exists at: " conf-file)))
     (when (prompt-for (str "Copy " template " to " (.toString conf-file)
-                           "overwriting any pre-existing file?\n(yes/no)> ") ["YES" "Y"])
+                           "overwriting any pre-existing file?\n(yes/no)") ["YES" "Y"])
       (generate-config (clojure.java.io/file template) conf-file))))
 
 
