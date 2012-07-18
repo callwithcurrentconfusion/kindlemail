@@ -23,7 +23,7 @@
   (clojure.java.io/copy template f))
 
 
-;; find-config [] -> file | nil
+;; find-config [] -> file 
 ;; can find with (System/getProperty "user.home")
 (defn find-config
   "Locate the .kindlemail configuration file, whether it's been created yet or not."
