@@ -15,7 +15,8 @@
 ;; TODO: skip copying local files to /tmp, just mail them without deleting.
 ;; TODO: RSS feeds in config file
 ;; TODO: Exceptions: un-found config, failed download, failed mail...
-;; TODO: lzpack? shell, scripts or something. 
+;; TODO: lzpack? shell, scripts or something.
+;; TODO: Catch if kindlemail is run without a modified config-file
 
 ;; **** GLOBALs ****
 ;; *****************
@@ -69,17 +70,18 @@
 ;         ["-v" "--verbose" "Verbose mode." :flag true]
          )
         filename (:file opts)]
-    (binding [*confm* (config->map (:config opts))] ; defaults to (find-config)
-      (def to-list (create-send-list (:list opts))) ; create a to-list
-      (cond
-       (:help opts) (println doc)
-       (:setup opts) (kindlemail-setup (:setup opts))
-       ;; we have side effects so we need to force evaulation on the entire sequence of arguments
-       :else  (doseq [arg a]
-                (-> arg
-                    (better-download filename)
-                    (mail-file to-list)
-                    delete-file))))))
+    (cond
+     (:help opts) (println doc)
+     (:setup opts) (kindlemail-setup (:setup opts))
+     ;; moved bindings down here so the exception for config->map doesn't prvent the -setup
+     ;; we have side effects so we need to force evaulation on the entire sequence of arguments
+     :else (binding [*confm* (config->map (:config opts))]
+             (when *confm* ; we cound and read our config file
+               (doseq [arg a]
+                 (-> arg
+                     (better-download filename)
+                     (mail-file (create-send-list (:list opts)))
+                     delete-file)))))))
 
 
 
