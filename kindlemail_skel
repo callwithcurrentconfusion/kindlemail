@@ -5,24 +5,29 @@
 {
 
 ;; The host you're using to send the mail.
-;; "smtp.gmail.com"
 :host "HOST" 
 
 ;; The username for host.
-;; "username"
 :user "USER"
 
 ;; Password for host.
-;; "password"
 :pass "PASS"
 
 ;; The email associated with your user@host
-;; "username@gmail.com"
 :from "FROM"
 
-;; The default target
-;; "username@kindle.com"
+;; The default target, usually name@kindle.com
 :to "TO"
+
+;; Specify Optional convert for builtin filetypes.
+;; i.e. you can have Amazon convert a .pdf file for you, even though your fire may support the .pdf file natively.
+:conversion
+;; Syntax is :convert ".filetype"
+{
+;; Example
+;; :convert ".pdf"
+
+}
 
 ;; Optionally, Specify named lists that can be used as a collective TO.
 ;; Greate for sending an article to an entire class, or everyone in a book club, etc.
@@ -33,7 +38,6 @@
 {
 ;; Example:
 ;; "history-101" ["bob@school.edu" "michelle@school.edu"]
-
 
 }      
 
