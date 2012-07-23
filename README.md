@@ -3,15 +3,13 @@ Kindlemail
 
 Kindlemail is a quick-n-dirty utility for sending files or web-pages to your kindle. 
 
-This project is still in very early Alpha, and will most likely 
+This project is still in very early alpha, and will most likely 
 get broken a lot as I add new features, and attempt to clean things up. 
 I'm still learning Clojure, and I am still amateur programmer; 
 all constructive criticism is welcome. 
 Please email me with any questions, comments, criticisms, or concerns.
 
-## Setup
-
-#Building
+##Building
 
 If you have Leiningen installed, you can build with a simple:
 
@@ -20,16 +18,13 @@ If you have Leiningen installed, you can build with a simple:
 Not using Leiningen, you can either build your jar with Clojure and Java, or ask me to send you one.
 I'll eventually put binaries somewhere public.
 
-#Configuring
+##Configuring
 
 Kindlemail reads from a .kindlemail config file, saved in the users $HOME directory.
 
->  LINUX:     /home/curtis/.kindlemail
+>  LINUX:    /home/curtis/.kindlemail
 >  OSX:      /users/curtis/.kindlemail
 >  WINDOWS:  C:\Users\curtis\\.kindlemail
-
-*note, I don't own Windows or OSX, and I could be completely wrong 
-about the $HOME directories on these OSes. Let me know if there's a better way to do this.
 
 A skeleton file is provided with kindlemail, and can be copied to $HOME/.kindlemail 
 by running with the -s --setup command. Or you can just copy it yourself. 
@@ -48,12 +43,14 @@ Simply replace the "CAPS" prompts in the config file to suit your needs.
 Kindlemail uses the postal library written by Andrew Raines - https://github.com/drewr/postal
 
 Currently, kindlemail will only use SMTP and not local mail. (coming soon, hopefully).
+Using yahoo mail is throwing exceptions. I'll have to work on this for future releases.
+For now, all that's been successfully tested is Gmail.
 
 The data in the config file is read into the program as a map. 
 Only change the fields require, or kindlemail won't work.
 
 
-## Usage
+## Using
 
 Generally, kindlemail is run on a single target file or URL, 
 however you can specify multiple targets and it will mail all of them. 
