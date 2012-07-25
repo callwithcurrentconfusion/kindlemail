@@ -21,13 +21,9 @@
 
 ;; Specify Optional convert for builtin filetypes.
 ;; i.e. you can have Amazon convert a .pdf file for you, even though your fire may support the .pdf file natively.
-:conversion
-;; Syntax is :convert ".filetype"
-{
-;; Example
-;; :convert ".pdf"
+;; Syntax is [".filetype" ".anotherfiletype"]
 
-}
+:convert []
 
 ;; Optionally, Specify named lists that can be used as a collective TO.
 ;; Greate for sending an article to an entire class, or everyone in a book club, etc.

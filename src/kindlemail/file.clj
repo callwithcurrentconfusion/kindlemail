@@ -1,8 +1,6 @@
 (ns kindlemail.file
-  (:require [clojure.java.io :as io])
-  (:use kindlemail.filetype))
-
-
+  (:require [clojure.java.io :as io]
+            [kindlemail.filetype :only check-filetype]))
 
 ;; better-download: target (url or file), string | nil -> file
 ;; TODO: handle FileNotFoundException for non-local file and unreachable url
@@ -11,7 +9,7 @@
   [target name]
   (let [t (io/file target)                           ; local file?
         tmpdir (System/getProperty "java.io.tmpdir") ; /tmp
-        filetype (check-filetype target)
+        filetype (kindlemail.filetype/check-filetype target)
         tmpfile (if (.exists t)
                   (io/file (str tmpdir "/"
                                 (if name

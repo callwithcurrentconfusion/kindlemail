@@ -1,10 +1,10 @@
 (ns kindlemail.core
   (:require [postal.core :only send-message]
             [clojure.tools.cli :only cli])  ;; send-message and command-line tools
-  (:use clojure.repl
-        kindlemail.file
-        kindlemail.config) ;; debugging, creating, and reading a .kindlemail config
-  (:gen-class :main true)) ;; aot compiling, public static void main(String[] args) BS.
+  (:use kindlemail.file
+        kindlemail.config
+        kindlemail.filetype) ;; debugging, creating, and reading a .kindlemail config
+  (:gen-class :main true)) ;; aot compiling for executable jarfile
 
 ;; TODO: parse the html to find the <title> and use that for a file-name if desired.
 ;; TODO: add optional target file for permanant saving.
@@ -12,25 +12,33 @@
 ;; TODO: check filetype is good for kindle, and send that filetype. .pdf .html, etc
 ;;       good use of this would be a multimethod for the differen kindle models
 ;; TODO  enhance the entire send-message command. allow people to use other email services (local email)
-;; TODO: skip copying local files to /tmp, just mail them without deleting.
+;;       *note, yahoo requires creating an authenticator object to send with the mail.
+
+;; TODO: SKIP COPYING LOCAL FILES TO /TMP, JUST MAIL THEM WITHOUT DELETING.
+
 ;; TODO: RSS feeds in config file
 ;; TODO: Exceptions: un-found config, failed download, failed mail...
 ;; TODO: lzpack? shell, scripts or something.
 ;; TODO: Catch if kindlemail is run without a modified config-file
+;; TODO: optional Convert! parameter in config file for .pdf, .html etc
+;; TODO: defrecord for parcel with file, name, and other payload options
+;;       config file will be reserver for mailing the message and mainly used by mail-file
+;; TODO: Application specific passwords for google (for extra security on some accounts)
 
 ;; **** GLOBALs ****
 ;; *****************
-;; user configuration will be bound to (config-map (find-config)) in -main thread
+;; user configuration will be bound to (config-map (find-config)) in -main threa'd
 (declare ^:dynamic *confm*)
 
 ;; mail: file, map, to-list -> file
 ;; mail exceptions to catch: FIXME
 ;; TODO: check status of mail. catch exceptions
+;; NOTE: Try-catch doesn't seem to catch javax.mail.MessagingException
 (defn mail-file
   "Mail the file.
    If a list-key is provided, create a list and dispatch mail to all addr on list."
   [f to-list]
-  ;; mail to each item in to-list
+  ;; mail to each address in to-list
   (doseq [addr to-list]
     (prn (postal.core/send-message ^{:host (:host *confm*)
                                          :user (:user *confm*)
@@ -63,8 +71,8 @@
         (clojure.tools.cli/cli
          args
          ["-h" "--help" "Show this dialogue." :flag true]
-         ["-f" "--file" "Specify the name of the file to send."]
-         ["-l" "--list" "Mail to a named list - declared in .kindlemail."]
+         ["-f" "--file" "Specify a new name for the file to be sent."]
+         ["-l" "--list" "Mail to a list declared in .kindlemail."]
          ["-c" "--config" "Use a specific config file." :default (find-config)]
          ["-s" "--setup" "Copy a config to $HOME/.kindlemail."]
 ;         ["-v" "--verbose" "Verbose mode." :flag true]
@@ -73,15 +81,28 @@
     (cond
      (:help opts) (println doc)
      (:setup opts) (kindlemail-setup (:setup opts))
-     ;; moved bindings down here so the exception for config->map doesn't prvent the -setup
      ;; we have side effects so we need to force evaulation on the entire sequence of arguments
      :else (binding [*confm* (config->map (:config opts))]
-             (when *confm* ; we cound and read our config file
+             (when *confm* ; we found and read our config file
                (doseq [arg a]
-                 (-> arg
-                     (better-download filename)
-                     (mail-file (create-send-list (:list opts)))
-                     delete-file)))))))
+                 (let [target (coerce-by-location arg)]
+                   (case (type target)
+                     java.net.URL (-> target
+                                      (remote-download filename)
+                                      (mail-file (create-send-list (:list opts)))
+                                      delete-file)
+                     java.io.File (if filename
+                                    ;; new filename
+                                    (-> target
+                                        (local-download filename)
+                                        (mail-file (create-send-list (:list opts)))
+                                        delete-file)
+                                    ;; just mail
+                                    (mail-file (create-send-list (:list opts))))))))))))
+
+
+
+
 
 
 

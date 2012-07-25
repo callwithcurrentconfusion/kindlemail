@@ -1,7 +1,5 @@
 (ns kindlemail.config)
 
-
-
 ;; prompt-for: "prompt" seq-of-matches -> boolean
 ;; *note: readline doesn't play well with slime's repl*
 (defn prompt-for
@@ -49,8 +47,8 @@
 ;; java.io.FileNotFoundException
 (defn config->map
   "Find a config file, and load it up for use by other functions."
-  [f]
-  (try (read-string (slurp f))
+  [filename]
+  (try (read-string (slurp filename))
        (catch java.io.FileNotFoundException e
-         (println (str "Couldn't read from " (.toString f) ".\nMake sure it exists and is readable."))
+         (println (str "Couldn't read from " (.toString filename) ".\nMake sure it exists and is readable."))
          nil)))

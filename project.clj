@@ -5,3 +5,4 @@
                  [com.draines/postal "1.8.0"]
                  [org.clojure/tools.cli "0.2.1"]]
   :main kindlemail.core)
+
