@@ -1,6 +1,8 @@
 (ns kindlemail.filetype)
 
 ;; TODO: Zip files?
+;; TODO: Derive filetypes, avoid redundancy
+
 ;; allowed kindle filetypes
 (def ^:private kindle-native-filetypes
   '(".AZW" ".TXT" ".PDF" ".MOBI" ".PRC"))
@@ -30,6 +32,11 @@
      (some #(= ext %) kindle-conversion-filetypes) "convert"
      :else (throw (Exception. "This filetype is not supported by your device.")))))
 
+;; default "" devicetype (for unconfigured device)
+(defmethod ^:private kindle-filetypes :default [_]
+  (fn [ext]
+    "convert"))
+
 ;; extract-filetype: string -> string ".ext" | ""
 (defn- extract-filetype
   "Get the filetype from a target-string based on the .ext only."
@@ -37,16 +44,15 @@
   (if-let [extracted (->> target
                           (re-matches #".*(\.[\d\w]+)")
                           last)]
-    ;; if we get something uppercase it
-    (.toUpperCase extracted)
-    ;; else return an empty string
+    extracted
+    ;; else return an empty string (no filetype)
     ""))
 
-;; check file-type: string -> "convert" "" | nil
+;; check file-type: STRING -> "convert" "" | nil
 (defn check-filetype
   "Check a filetype against the allow filetypes for a device. return the subject of the email."
   [confm ft]
-  ((kindle-filetypes confm) ft))
+  ((kindle-filetypes confm) (.toUpperCase ft)))
 
 ;; create-subject: map, string -> string
 (defn create-subject
@@ -55,4 +61,5 @@
   (let [ft (extract-filetype target)]
     (if (some #(= ft %) (get confm :convert)) ; check config file for override
       "convert"
+      ;; else go with whatever our supported filetypes say.
       (check-filetype confm ft))))

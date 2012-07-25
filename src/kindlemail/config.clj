@@ -1,5 +1,25 @@
 (ns kindlemail.config)
 
+;; find-config [] -> file 
+;; can find with (System/getProperty "user.home")
+(defn find-config
+  "Locate the .kindlemail configuration file, whether it's been created yet or not."
+  []
+  (let [home (System/getProperty "user.home")]
+    (clojure.java.io/file (str home "/.kindlemail"))))
+
+;; config->map: string -> map | throw Exception
+;; need exception handling here.
+;; failed slurp of unfound file
+;; java.io.FileNotFoundException
+(defn config->map
+  "Find a config file, and load it up for use by other functions."
+  [filename]
+  (try (read-string (slurp filename))
+       (catch java.io.FileNotFoundException e
+         (println (str "Couldn't read from " (.toString filename) ".\nMake sure it exists and is readable."))
+         nil)))
+
 ;; prompt-for: "prompt" seq-of-matches -> boolean
 ;; *note: readline doesn't play well with slime's repl*
 (defn prompt-for
@@ -20,15 +40,6 @@
   (println "Edit this file for future use, or specify another config to use at runtime with the \"-c\" flag.")
   (clojure.java.io/copy template f))
 
-
-;; find-config [] -> file 
-;; can find with (System/getProperty "user.home")
-(defn find-config
-  "Locate the .kindlemail configuration file, whether it's been created yet or not."
-  []
-  (let [home (System/getProperty "user.home")]
-    (clojure.java.io/file (str home "/.kindlemail"))))
-
 ;; FIXME: doesn't seem to be evaluating the and expression
 ;; kindlemail-setup: string -> nil
 (defn kindlemail-setup
@@ -42,13 +53,4 @@
       (generate-config (clojure.java.io/file template) conf-file))))
 
 
-;; need exception handling here.
-;; failed slurp of unfound file
-;; java.io.FileNotFoundException
-(defn config->map
-  "Find a config file, and load it up for use by other functions."
-  [filename]
-  (try (read-string (slurp filename))
-       (catch java.io.FileNotFoundException e
-         (println (str "Couldn't read from " (.toString filename) ".\nMake sure it exists and is readable."))
-         nil)))
+
