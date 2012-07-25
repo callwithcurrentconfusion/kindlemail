@@ -41,7 +41,8 @@
 ;; Specify your kindle version.
 ;; The kindlemail program will check for allowed filetypes for your device
 ;; choices are "kindle" and "fire" right now.
+;; If left blank, kindlemail will ask Amazon to convert every mail sent.
 
-:device "fire"
+:device ""
 
 }
