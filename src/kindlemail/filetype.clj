@@ -1,16 +1,16 @@
 (ns kindlemail.filetype)
-
-;; TODO: Zip files?
 ;; TODO: Derive filetypes, avoid redundancy
+;; TODO: work on matching .com .org .net addresses, maybe use
+;; .getFile? seems to get the hosted file referenced by a url. 
 
 ;; allowed kindle filetypes
 (def ^:private kindle-native-filetypes
-  '(".AZW" ".TXT" ".PDF" ".MOBI" ".PRC"))
+  '(".AZW" ".TXT" ".PDF" ".MOBI" ".PRC" ".ZIP"))
 (def ^:private kindle-conversion-filetypes
   '(".HTML" ".DOC" ".DOCX" ".JPEG" ".GIF" ".PNG" ".BMP" ".AA" ".AAX" ".MP3" ".KF8"))
 ;; allowed kindle fire filetypes
 (def ^:private fire-native-filetypes
-  '(".AZW" ".TXT" ".PDF" ".MOBI" ".PRC"))
+  '(".AZW" ".TXT" ".PDF" ".MOBI" ".PRC" ".ZIP"))
 (def ^:private fire-conversion-filetypes
   '(".DOC" ".DOCX" ".MP3" ".AAC" ".MIDI" ".OGG" ".WAV" ".JPEG" ".GIF"
     ".PNG" ".BMP" ".MP4" ".VP8" ".HTML"))
@@ -37,29 +37,37 @@
   (fn [ext]
     "convert"))
 
-;; extract-filetype: string -> string ".ext" | ""
-(defn- extract-filetype
-  "Get the filetype from a target-string based on the .ext only."
-  [target]
-  (if-let [extracted (->> target
-                          (re-matches #".*(\.[\d\w]+)")
-                          last)]
-    extracted
-    ;; else return an empty string (no filetype)
-    ""))
-
-;; check file-type: STRING -> "convert" "" | nil
-(defn check-filetype
+;; check file-type: config, string -> "convert" "" | nil
+(defn- check-filetype
   "Check a filetype against the allow filetypes for a device. return the subject of the email."
   [confm ft]
   ((kindle-filetypes confm) (.toUpperCase ft)))
 
+;; TODO: figure out better way to do this? MIME?
+;; extract-filetype: string -> string ".ext" | default ("")
+(defn extract-filetype
+  "Get the filetype from a target-string based on the .ext only. If we fail, use an optional default or an empty string"
+  ([target & default]
+     (if-let [extracted (->> target
+                             (re-matches #".*(\.[\d\w]+)")
+                             last)]
+       ;; If we matched any filetype, use that.
+       extracted
+       ;; Else return our default filetype.
+       (first default)))
+  ([target]
+     (extract-filetype target "")))
+
 ;; create-subject: map, string -> string
 (defn create-subject
-  "Generate the email subject based on filetype and user config file."
-  [confm target]
-  (let [ft (extract-filetype target)]
-    (if (some #(= ft %) (get confm :convert)) ; check config file for override
-      "convert"
-      ;; else go with whatever our supported filetypes say.
-      (check-filetype confm ft))))
+  "Generate the email subject bbased on filetype and user config file."
+  [confm ft]
+  (if (some #(= ft %) (get confm :convert)) ; check config file for override
+    "convert"
+    ;; else go with whatever our supported filetypes say.
+    (check-filetype confm ft)))
+
+(defn get-hosted-file
+  "Return the portion of a URL representing the hosted file as a string."
+  [target]
+  (.getFile (java.net.URL. target)))

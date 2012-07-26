@@ -1,5 +1,8 @@
 (ns kindlemail.config)
 
+;; TODO: XDG_CONFIG_HOME
+;; TODO: check config, warn on syntax errors or unconfigured items
+
 ;; find-config [] -> file 
 ;; can find with (System/getProperty "user.home")
 (defn find-config

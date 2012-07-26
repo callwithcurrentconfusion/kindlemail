@@ -37,7 +37,7 @@
 (defn mail-file
   "Mail the file.
    If a list-key is provided, create a list and dispatch mail to all addr on list."
-  [f to-list]
+  [f to-list subject]
   ;; mail to each address in to-list
   (doseq [addr to-list]
     (prn (postal.core/send-message ^{:host (:host *confm*)
@@ -46,7 +46,8 @@
                                          :ssl :yes}
                                        {:from (:from *confm*)
                                         :to addr
-                                        :subject "convert"
+                                        ;; :subject "convert"
+                                        :subject subject
                                         :body [{:type :attachment
                                                 :content f
                                                 }]})))
@@ -58,12 +59,13 @@
   ([list-arg]
      (if list-arg
        ;; look in the :lists values for a key named list-arg
-       (get-in *confm* [:lists (keyword list-arg)] [])
+       (get-in *confm* [:lists (keyword list-arg)] (throw (Exception. (str "List " list-arg
+                                                                           " is not listed in your config."))))
        ;; else send to the :to value in config
        [(:to *confm*)])))
 
 ;; **** MAIN ****
-;; -main: array-seq of args -> boolean
+;; -main: array-seq of args -> boolean 
 (defn -main
   "download, mail, and delete file from address."
   [& args]
@@ -71,7 +73,7 @@
         (clojure.tools.cli/cli
          args
          ["-h" "--help" "Show this dialogue." :flag true]
-         ["-f" "--file" "Specify a new name for the file to be sent."]
+         ["-f" "--file" "Specify a new name for the file to be sent.\n You must specify a filetype, i.e. .pdf, .html, etc."]
          ["-l" "--list" "Mail to a list declared in .kindlemail."]
          ["-c" "--config" "Use a specific config file." :default (find-config)]
          ["-s" "--setup" "Copy a config to $HOME/.kindlemail."]
@@ -85,20 +87,23 @@
      :else (binding [*confm* (config->map (:config opts))]
              (when *confm* ; we found and read our config file
                (doseq [arg a]
-                 (let [target (coerce-by-location arg)]
-                   (case (type target)
-                     java.net.URL (-> target
-                                      (remote-download filename)
-                                      (mail-file (create-send-list (:list opts)))
-                                      delete-file)
-                     java.io.File (if filename
-                                    ;; new filename
-                                    (-> target
-                                        (local-download filename)
-                                        (mail-file (create-send-list (:list opts)))
-                                        delete-file)
-                                    ;; just mail
-                                    (mail-file (create-send-list (:list opts))))))))))))
+                 ))))))
+
+;; check-everything
+;; valid file? valid url
+;; create parcel
+;; subject, file, filetype, to from, etc
+
+;; what needs what
+
+;; name      __, file, ______, _______, ____, ext, remote/local
+
+;; download  __, file, ______, _______, name, ___, remote/local ->
+;; package-details (file, subj)
+
+;; subject   __, ____, config, _______, ____, ext
+
+;; mail:     to, file, config, subject
 
 
 
