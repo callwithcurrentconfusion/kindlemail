@@ -2,18 +2,18 @@
   (:require [clojure.java.io :as io]
             [kindlemail.filetype :only extract-filetype]))
 
-;; TODO: fix title parser, maybe use an html parser instead of sketchy regex
-
-
+;; TODO: fix title parser, maybe use an html parser instead of sketchy
+;; regex
 
 (def tmpdir (System/getProperty "java.io.tmpdir"))
 
 ;; find-page-title: string -> string
-(defn- find-page-title
+(defn find-page-title
   "Match the <title> TITLE </title> of a webpage."
   [page]
   (last
-   (re-find #"(?i)<TITLE>(.*)</TITLE>" page))) ;; (?is) will match \newlines
+  ;; (?s) will match \newlines, ?i will ignore case
+  (re-find #"(?i)<TITLE>[\n]*(.*)[\n]*</TITLE>" page)))
 
 (defn- copy-remote
   "Write a URL into a file"

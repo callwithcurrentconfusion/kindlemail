@@ -96,10 +96,9 @@
 
 ;; what needs what
 
-;; name      __, file, ______, _______, ____, ext, remote/local
+;; name      __, file, ______, _______, name, ext, remote/local
 
-;; download  __, file, ______, _______, name, ___, remote/local ->
-;; package-details (file, subj)
+;; download  __, file, ______, _______, name, ___, remote/local 
 
 ;; subject   __, ____, config, _______, ____, ext
 
