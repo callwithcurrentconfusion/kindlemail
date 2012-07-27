@@ -34,11 +34,12 @@
     ;; we dont have a name yet, attempt to create it ourselves
     ;; to do this we need to read the page in as a string and regex it
     ;; (gotta be a better way to do this)!
-    (let [page (slurp target) 
+    (let [target (java.net.URL. target)
+          page (slurp target) 
           name (if-let [title (find-page-title page)]
                  title
                  "no-name")
-          filetype (kindlemail.filetype/extract-filetype (.getFile (java.net.URL. target)) ".html")
+          filetype (kindlemail.filetype/extract-filetype (.getFile target) ".html")
           tmpfile (io/file (str tmpdir "/" name filetype))]
       (spit tmpfile page)
       tmpfile)))

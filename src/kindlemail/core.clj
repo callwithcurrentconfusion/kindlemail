@@ -3,10 +3,11 @@
             [clojure.tools.cli :only cli])  ;; send-message and command-line tools
   (:use kindlemail.file
         kindlemail.config
-        kindlemail.filetype) ;; debugging, creating, and reading a .kindlemail config
+        kindlemail.filetype
+        clojure.repl) ;; debugging, creating, and reading a .kindlemail config
   (:gen-class :main true)) ;; aot compiling for executable jarfile
 
-;; TODO: parse the html to find the <title> and use that for a file-name if desired.
+;; DONE: parse the html to find the <title> and use that for a file-name if desired.
 ;; TODO: add optional target file for permanant saving.
 ;; TODO: optional conversion of file (maybe use calibre)
 ;; TODO: check filetype is good for kindle, and send that filetype. .pdf .html, etc
@@ -20,10 +21,16 @@
 ;; TODO: Exceptions: un-found config, failed download, failed mail...
 ;; TODO: lzpack? shell, scripts or something.
 ;; TODO: Catch if kindlemail is run without a modified config-file
-;; TODO: optional Convert! parameter in config file for .pdf, .html etc
+;; DONE: optional Convert! parameter in config file for .pdf, .html etc
 ;; TODO: defrecord for parcel with file, name, and other payload options
 ;;       config file will be reserver for mailing the message and mainly used by mail-file
-;; TODO: Application specific passwords for google (for extra security on some accounts)
+;; TODO: Application specific passwords for google (for extra security
+;; on some accounts)
+;; TODO: write get-in that won't evaluate it's fail condition unless
+;; it actually fails to find the values
+;; TODO: get-in seems to always eval it's fail argument (at least when
+;; it throws or side-effects.) figure out some way to fix this.
+
 
 ;; **** GLOBALs ****
 ;; *****************
@@ -53,16 +60,16 @@
                                                 }]})))
   f)
 
+
 ;; create-send-list: list-name -> array-of-strings
 (defn create-send-list
   "Create a to-list based on config file and a list-keyword or nil."
-  ([list-arg]
-     (if list-arg
-       ;; look in the :lists values for a key named list-arg
-       (get-in *confm* [:lists (keyword list-arg)] (throw (Exception. (str "List " list-arg
-                                                                           " is not listed in your config."))))
-       ;; else send to the :to value in config
-       [(:to *confm*)])))
+  [confm list-arg]
+  (if list-arg
+    ;; look in the :lists values for a key named list-arg
+    (get-in confm [:lists list-arg] [])
+    ;; else send to the :to value in config
+    [(:to confm)]))
 
 ;; **** MAIN ****
 ;; -main: array-seq of args -> boolean 
