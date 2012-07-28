@@ -67,7 +67,3 @@
     ;; else go with whatever our supported filetypes say.
     (check-filetype confm ft)))
 
-(defn get-hosted-file
-  "Return the portion of a URL representing the hosted file as a string."
-  [target]
-  (.getFile (java.net.URL. target)))

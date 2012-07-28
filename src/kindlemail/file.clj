@@ -8,6 +8,7 @@
 (def tmpdir (System/getProperty "java.io.tmpdir"))
 
 ;; find-page-title: string -> string
+;; FIXME make private
 (defn find-page-title
   "Match the <title> TITLE </title> of a webpage."
   [page]
