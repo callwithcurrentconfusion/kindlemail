@@ -10,7 +10,7 @@
 ;; DONE: parse the html to find the <title> and use that for a file-name if desired.
 ;; TODO: add optional target file for permanant saving.
 ;; TODO: optional conversion of file (maybe use calibre)
-;; TODO: check filetype is good for kindle, and send that filetype. .pdf .html, etc
+;; DONE: check filetype is good for kindle, and send that filetype. .pdf .html, etc
 ;;       good use of this would be a multimethod for the differen kindle models
 ;; TODO  enhance the entire send-message command. allow people to use other email services (local email)
 ;;       *note, yahoo requires creating an authenticator object to send with the mail.
@@ -26,8 +26,6 @@
 ;;       config file will be reserver for mailing the message and mainly used by mail-file
 ;; TODO: Application specific passwords for google (for extra security
 ;; on some accounts)
-;; TODO: write get-in that won't evaluate it's fail condition unless
-;; it actually fails to find the values
 ;; TODO: get-in seems to always eval it's fail argument (at least when
 ;; it throws or side-effects.) figure out some way to fix this.
 
@@ -61,7 +59,7 @@
   f)
 
 
-;; create-send-list: list-name -> array-of-strings
+
 (defn create-send-list
   "Create a to-list based on config file and a list-keyword or nil."
   [confm list-arg]

@@ -2,13 +2,18 @@
   (:require [clojure.java.io :as io]
             [kindlemail.filetype :only extract-filetype]))
 
-;; TODO: fix title parser, maybe use an html parser instead of sketchy
-;; regex
+;; TODO: use url filename instead of page title if possible.
 
 (def tmpdir (System/getProperty "java.io.tmpdir"))
 
+(defn create-km-filename
+  "Create a string representing a kindlemail filename."
+  ([name]
+     (str tmpdir "/" name))
+  ([name filetype]
+     (str tmpdir "/" name filetype)))
+
 ;; find-page-title: string -> string
-;; FIXME make private
 (defn find-page-title
   "Match the <title> TITLE </title> of a webpage."
   [page]
@@ -16,34 +21,44 @@
   ;; (?s) will match \newlines, ?i will ignore case
   (re-find #"(?i)<TITLE>[\n]*(.*)[\n]*</TITLE>" page)))
 
+;; copy-remote: URL, file -> file
+;; reader = characters
+;; stream = bytes
 (defn- copy-remote
   "Write a URL into a file"
   [url file]
-  (with-open [rdr  (io/reader url)
-              wrtr (io/writer file)]
-    (io/copy rdr wrtr)))
+  (with-open [in  (io/input-stream url)
+              out (io/output-stream file)]
+    (io/copy in out))
+  file)
 
+;; remote-download: string, string | nil -> file
+;; NOTE: slow now, because we're copying a url to a file, and then a
+;; file to a string. maybe we can regex as bytes on the stream or file?
 (defn remote-download
   "download a remote file, renaming it with name, or extracting a name for it."
   [target name]
+  (def u (io/as-url target))
   ;; assume filetype checked with name
   (if name
-    (let [url  (io/as-url target)
-          file (io/file (str tmpdir "/" name))]
-      (copy-remote url file)
-      file)
-    ;; we dont have a name yet, attempt to create it ourselves
-    ;; to do this we need to read the page in as a string and regex it
+    (copy-remote u (io/file (create-km-filename name)))
     ;; (gotta be a better way to do this)!
-    (let [target (java.net.URL. target)
-          page (slurp target) 
-          name (if-let [title (find-page-title page)]
-                 title
-                 "no-name")
-          filetype (kindlemail.filetype/extract-filetype (.getFile target) ".html")
-          tmpfile (io/file (str tmpdir "/" name filetype))]
-      (spit tmpfile page)
-      tmpfile)))
+    (let [tmpfile (copy-remote u (java.io.File/createTempFile "kindlemail" nil))
+          ;; our remote file is now saved temporarly in a tmpfile. We need
+          ;; to rename it now, with either it's own title (if it's a
+          ;; webpage) or with the filename part of the url
+          f       (.getFile u)
+          ft      (kindlemail.filetype/extract-filetype f ".html")
+          renamed-file (clojure.java.io/file
+                        (if (= ".HTML" (.toUpperCase ft))
+                          ;; if it's a webpage (.html) get the title
+                          (create-km-filename 
+                           (find-page-title (slurp tmpfile)) ".html")
+                          ;; else name it after it's filename
+                          (create-km-filename
+                           (last (clojure.string/split f #"/")))))]
+      (.renameTo tmpfile renamed-file)
+      renamed-file)))
 
 ;; local-download: string, string -> file
 (defn local-download
@@ -51,10 +66,9 @@
   [file-name new-name]
   ;; assume filetype has been checked already
   (let [f (io/file file-name)
-        tmpfile (io/file (str tmpdir "/" new-name))]
+        tmpfile (io/file (create-km-filename new-name))]
     (io/copy f tmpfile)
     tmpfile))
-
 
 ;; delete file: string -> boolean
 (defn delete-file
