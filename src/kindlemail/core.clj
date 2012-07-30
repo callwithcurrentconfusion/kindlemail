@@ -28,6 +28,8 @@
 ;; on some accounts)
 ;; TODO: get-in seems to always eval it's fail argument (at least when
 ;; it throws or side-effects.) figure out some way to fix this.
+;; TODO: config file - add optional text to prepend all sent files
+;; with. ("kindlemail-" -> "kindlemail-file.pdf")
 
 
 ;; **** GLOBALs ****
@@ -42,8 +44,9 @@
 (defn mail-file
   "Mail the file.
    If a list-key is provided, create a list and dispatch mail to all addr on list."
-  [f to-list subject]
+  [f to-list]
   ;; mail to each address in to-list
+  (def subject (create-subject *confm* (extract-filetype (.getName f))))
   (doseq [addr to-list]
     (prn (postal.core/send-message ^{:host (:host *confm*)
                                          :user (:user *confm*)
@@ -69,6 +72,15 @@
     ;; else send to the :to value in config
     [(:to confm)]))
 
+(defn post-mail
+  "Dispatch the mail."
+  [arg name f to]
+  (-> arg
+      (f name)
+      ; (try (mail-file to) ...
+      (mail-file to)
+      delete-file))
+
 ;; **** MAIN ****
 ;; -main: array-seq of args -> boolean 
 (defn -main
@@ -78,7 +90,7 @@
         (clojure.tools.cli/cli
          args
          ["-h" "--help" "Show this dialogue." :flag true]
-         ["-f" "--file" "Specify a new name for the file to be sent.\n You must specify a filetype, i.e. .pdf, .html, etc."]
+         ["-n" "--name" "Specify a new name for the file to be sent.\n You must specify a filetype, i.e. .pdf, .html, etc."]
          ["-l" "--list" "Mail to a list declared in .kindlemail."]
          ["-c" "--config" "Use a specific config file." :default (find-config)]
          ["-s" "--setup" "Copy a config to $HOME/.kindlemail."]
@@ -92,7 +104,24 @@
      :else (binding [*confm* (config->map (:config opts))]
              (when *confm* ; we found and read our config file
                (doseq [arg a]
-                 ))))))
+                 ;; dispatch based on local/remote and name
+                 (if (local-file? arg)
+                   ;; local
+                   (if name
+                     (post-mail arg
+                                (:name opts)
+                                local-download
+                                (create-send-list *confm* (:list opts)))
+                     ;; not renaming, just mail and be done
+                     (mail-file (clojure.java.io/file arg)
+                                (create-send-list *confm* (:list opts))))
+                   ;; remote
+                   (post-mail arg
+                              (:name opts)
+                              remote-download
+                              (create-send-list *confm* (:list opts))))))))))
+
+
 
 ;; check-everything
 ;; valid file? valid url

@@ -52,7 +52,7 @@
     (when (.exists conf-file)
       (println (str "Config file already exists at: " conf-file)))
     (when (prompt-for (str "Copy " template " to " (.toString conf-file)
-                           "overwriting any pre-existing file?\n(yes/no)") ["YES" "Y"])
+                           ", overwriting any pre-existing file?\n(yes/no)") ["YES" "Y"])
       (generate-config (clojure.java.io/file template) conf-file))))
 
 
