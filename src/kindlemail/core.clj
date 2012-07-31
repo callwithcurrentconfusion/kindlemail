@@ -7,21 +7,18 @@
         clojure.repl) ;; debugging, creating, and reading a .kindlemail config
   (:gen-class :main true)) ;; aot compiling for executable jarfile
 
-;; DONE: parse the html to find the <title> and use that for a file-name if desired.
+;; TODO: TEST
+;; TODO: have download file return both file and subject, and
+;; mail-file will use both of them
 ;; TODO: add optional target file for permanant saving.
 ;; TODO: optional conversion of file (maybe use calibre)
-;; DONE: check filetype is good for kindle, and send that filetype. .pdf .html, etc
-;;       good use of this would be a multimethod for the differen kindle models
 ;; TODO  enhance the entire send-message command. allow people to use other email services (local email)
 ;;       *note, yahoo requires creating an authenticator object to send with the mail.
-
-;; TODO: SKIP COPYING LOCAL FILES TO /TMP, JUST MAIL THEM WITHOUT DELETING.
 
 ;; TODO: RSS feeds in config file
 ;; TODO: Exceptions: un-found config, failed download, failed mail...
 ;; TODO: lzpack? shell, scripts or something.
 ;; TODO: Catch if kindlemail is run without a modified config-file
-;; DONE: optional Convert! parameter in config file for .pdf, .html etc
 ;; TODO: defrecord for parcel with file, name, and other payload options
 ;;       config file will be reserver for mailing the message and mainly used by mail-file
 ;; TODO: Application specific passwords for google (for extra security
