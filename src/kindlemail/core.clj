@@ -8,9 +8,10 @@
   (:gen-class :main true)) ;; aot compiling for executable jarfile
 
 ;; TODO: TEST
+;; TODO: Not detecting local file.
 ;; TODO: have download file return both file and subject, and
 ;; mail-file will use both of them
-;; TODO: add optional target file for permanant saving.
+
 ;; TODO: optional conversion of file (maybe use calibre)
 ;; TODO  enhance the entire send-message command. allow people to use other email services (local email)
 ;;       *note, yahoo requires creating an authenticator object to send with the mail.
@@ -27,6 +28,8 @@
 ;; it throws or side-effects.) figure out some way to fix this.
 ;; TODO: config file - add optional text to prepend all sent files
 ;; with. ("kindlemail-" -> "kindlemail-file.pdf")
+;; TODO: add optional target file for permanant saving.
+;; TODO: see if we can avoid using gen-class and AOT compiling.
 
 
 ;; **** GLOBALs ****
@@ -93,7 +96,7 @@
          ["-s" "--setup" "Copy a config to $HOME/.kindlemail."]
 ;         ["-v" "--verbose" "Verbose mode." :flag true]
          )
-        filename (:file opts)]
+        name (:name opts)]
     (cond
      (:help opts) (println doc)
      (:setup opts) (kindlemail-setup (:setup opts))
@@ -105,18 +108,24 @@
                  (if (local-file? arg)
                    ;; local
                    (if name
+                     (do
+                       (println "Sending local file with file rename.")
+                       (post-mail arg
+                                  (:name opts)
+                                  local-download
+                                  (create-send-list *confm* (:list opts))))
+                     ;; not renaming, just mail and be done
+                     (do
+                       (println "Sending local file without renaming.")
+                       (mail-file (clojure.java.io/file arg)
+                                     (create-send-list *confm* (:list opts)))))
+                   ;; remote
+                   (do
+                     (println "Sending remote file.")
                      (post-mail arg
                                 (:name opts)
-                                local-download
-                                (create-send-list *confm* (:list opts)))
-                     ;; not renaming, just mail and be done
-                     (mail-file (clojure.java.io/file arg)
-                                (create-send-list *confm* (:list opts))))
-                   ;; remote
-                   (post-mail arg
-                              (:name opts)
-                              remote-download
-                              (create-send-list *confm* (:list opts))))))))))
+                                remote-download
+                                (create-send-list *confm* (:list opts)))))))))))
 
 
 

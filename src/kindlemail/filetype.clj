@@ -20,7 +20,7 @@
 
 (defmethod kindle-filetypes "fire" [_]
   (fn [ext]
-    (println (str "Checking " ext "in fire allowed filetypes..." ))
+    (println (str "Checking " ext " in fire allowed filetypes..." ))
     (cond
      (some #(= ext %) fire-native-filetypes) ""
      (some #(= ext %) fire-conversion-filetypes) "convert"
@@ -28,7 +28,7 @@
 
 (defmethod kindle-filetypes "kindle" [_]
   (fn [ext]
-    (println (str "Checking " ext "in kindle allowed filetypes..." ))
+    (println (str "Checking " ext " in kindle allowed filetypes..." ))
     (cond
      (some #(= ext %) kindle-native-filetypes) ""
      (some #(= ext %) kindle-conversion-filetypes) "convert"
