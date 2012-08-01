@@ -7,8 +7,11 @@
         clojure.repl) ;; debugging, creating, and reading a .kindlemail config
   (:gen-class :main true)) ;; aot compiling for executable jarfile
 
-;; TODO: TEST
-;; TODO: Not detecting local file.
+;; TODO: problem with bash script sending non-absolut path qualified
+;; files... learn some bash scripting someday, eh?
+;; HMMMM: Problem with extracting filetype from a
+;; .com?something.it/thisthat website, read about URL doc and don't
+;; parse in unecessary parts (queries, etc).
 ;; TODO: have download file return both file and subject, and
 ;; mail-file will use both of them
 
@@ -90,10 +93,10 @@
         (clojure.tools.cli/cli
          args
          ["-h" "--help" "Show this dialogue." :flag true]
-         ["-n" "--name" "Specify a new name for the file to be sent.\n You must specify a filetype, i.e. .pdf, .html, etc."]
+         ["-n" "--name" "Specify a new name for the file to be sent. You must specify a filetype, i.e. .pdf, .html, etc."]
          ["-l" "--list" "Mail to a list declared in .kindlemail."]
          ["-c" "--config" "Use a specific config file." :default (find-config)]
-         ["-s" "--setup" "Copy a config to $HOME/.kindlemail."]
+         ["-s" "--setup" "Copy a file to $HOME/.kindlemail. Use initially on the kindlemail_skel file."]
 ;         ["-v" "--verbose" "Verbose mode." :flag true]
          )
         name (:name opts)]

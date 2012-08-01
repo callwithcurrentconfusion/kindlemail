@@ -20,7 +20,6 @@
 
 (defmethod kindle-filetypes "fire" [_]
   (fn [ext]
-    (println (str "Checking " ext " in fire allowed filetypes..." ))
     (cond
      (some #(= ext %) fire-native-filetypes) ""
      (some #(= ext %) fire-conversion-filetypes) "convert"
@@ -28,21 +27,14 @@
 
 (defmethod kindle-filetypes "kindle" [_]
   (fn [ext]
-    (println (str "Checking " ext " in kindle allowed filetypes..." ))
     (cond
      (some #(= ext %) kindle-native-filetypes) ""
      (some #(= ext %) kindle-conversion-filetypes) "convert"
      :else (throw (Exception. "This filetype is not supported by your device.")))))
 
-;; does default match anything not specified?
-;; (defmethod kindle-filetypes "" [_]
-;;   (fn [ext]
-;;     "convert"))
-
 ;; default "" devicetype (for unconfigured device)
 (defmethod kindle-filetypes :default [_]
   (fn [ext]
-    (println "No device specified in config; will attempt to convert attached file.")
     "convert"))
 
 ;; check file-type: config, string -> "convert" "" | nil
@@ -74,4 +66,5 @@
     "convert"
     ;; else go with whatever our supported filetypes say.
     (check-filetype confm ft)))
+
 
