@@ -7,38 +7,15 @@
         clojure.repl) ;; debugging, creating, and reading a .kindlemail config
   (:gen-class :main true)) ;; aot compiling for executable jarfile
 
-;; TODO: problem with bash script sending non-absolut path qualified
-;; files... learn some bash scripting someday, eh?
-;; HMMMM: Problem with extracting filetype from a
-;; .com?something.it/thisthat website, read about URL doc and don't
-;; parse in unecessary parts (queries, etc).
-;; TODO: have download file return both file and subject, and
-;; mail-file will use both of them
-
-;; TODO: optional conversion of file (maybe use calibre)
-;; TODO  enhance the entire send-message command. allow people to use other email services (local email)
-;;       *note, yahoo requires creating an authenticator object to send with the mail.
-
-;; TODO: RSS feeds in config file
-;; TODO: Exceptions: un-found config, failed download, failed mail...
-;; TODO: lzpack? shell, scripts or something.
-;; TODO: Catch if kindlemail is run without a modified config-file
-;; TODO: defrecord for parcel with file, name, and other payload options
-;;       config file will be reserver for mailing the message and mainly used by mail-file
-;; TODO: Application specific passwords for google (for extra security
-;; on some accounts)
-;; TODO: get-in seems to always eval it's fail argument (at least when
-;; it throws or side-effects.) figure out some way to fix this.
-;; TODO: config file - add optional text to prepend all sent files
-;; with. ("kindlemail-" -> "kindlemail-file.pdf")
-;; TODO: add optional target file for permanant saving.
-;; TODO: see if we can avoid using gen-class and AOT compiling.
-
+;; BUGS:
+;; http://www.pawfal.org/dave/blog/2012/08/algorithmic-fungi-patterns/?utm_source=dlvr.it&utm_medium=twitter
+;; breaks it. the File is "/dave/blog/2012/08/algorithmic-fungi-patterns/?utm_source=dlvr.it&utm_medium=twitter"
 
 ;; **** GLOBALs ****
 ;; *****************
 ;; user configuration will be bound to (config-map (find-config)) in -main threa'd
 (declare ^:dynamic *confm*)
+
 
 ;; mail: file, map, to-list -> file
 ;; mail exceptions to catch: FIXME
