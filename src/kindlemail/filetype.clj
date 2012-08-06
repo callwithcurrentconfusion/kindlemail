@@ -46,7 +46,8 @@
 ;; TODO: figure out better way to do this? MIME?
 ;; extract-filetype: string -> string ".ext" | default ("")
 (defn extract-filetype
-  "Get the filetype from a target-string based on the .ext only. If we fail, use an optional default or an empty string"
+  "Get the filetype from a target-string based on the .ext only.
+If we fail, use an optional default or an empty string."
   ([target & default]
      (if-let [extracted (->> target
                              (re-matches #".*(\.[\d\w]+)")

@@ -3,6 +3,10 @@
             [kindlemail.filetype :only extract-filetype]))
 
 ;; TODO: use url filename instead of page title if possible.
+;; FIXME:
+;;><TITLE
+;;>Testing and Branching</TITLE
+;; breaking title-extractor.
 
 (def tmpdir (System/getProperty "java.io.tmpdir"))
 
@@ -18,8 +22,10 @@
   "Match the <title> TITLE </title> of a webpage."
   [page]
   (last
-  ;; (?s) will match \newlines, ?i will ignore case
-  (re-find #"(?i)<TITLE>[\n]*(.*)[\n]*</TITLE>" page)))
+   ;; (?s) will match \newlines, ?i will ignore case
+   (re-find #"(?i)<[\n]*TITLE[\n]*>[\n]*(.*)[\n]*<[\n]*/TITLE[\n]*>" page)
+   ;;(re-find #"(?i)<TITLE>[\n]*(.*)[\n]*</TITLE>" page)
+   ))
 
 ;; copy-remote: URL, file -> file
 ;; reader = characters
