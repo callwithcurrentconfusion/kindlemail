@@ -16,7 +16,6 @@
 ;; user configuration will be bound to (config-map (find-config)) in -main threa'd
 (declare ^:dynamic *confm*)
 
-
 ;; mail: file, map, to-list -> file
 ;; mail exceptions to catch: FIXME
 ;; TODO: check status of mail. catch exceptions
@@ -73,14 +72,15 @@
          ["-n" "--name" "Specify a new name for the file to be sent. You must specify a filetype, i.e. .pdf, .html, etc."]
          ["-l" "--list" "Mail to a list declared in .kindlemail."]
          ["-c" "--config" "Use a specific config file." :default (find-config)]
-         ["-s" "--setup" "Copy a file to $HOME/.kindlemail. Use initially on the kindlemail_skel file."]
-;         ["-v" "--verbose" "Verbose mode." :flag true]
+         ["-s" "--setup" "Copy a file to $HOME/.kindlemail. Run on the kindlemail_skel file to install it as a config file."]
+         ["-C" "--convert" "Override automatic subject generation--convert file." :flag true]
+         ["-NC" "--no-convert" "Override automatic subject generation--do not convert file." :flag true]
          )
         name (:name opts)]
     (cond
-     (:help opts) (println doc)
+     ;; if the user provided no arguments, or the help flag, print out documentation
+     (or (empty? args) (:help opts)) (println doc)
      (:setup opts) (kindlemail-setup (:setup opts))
-     ;; we have side effects so we need to force evaulation on the entire sequence of arguments
      :else (binding [*confm* (config->map (:config opts))]
              (when *confm* ; we found and read our config file
                (doseq [arg a]
